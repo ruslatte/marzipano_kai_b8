@@ -1,0 +1,441 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <title>VR‑кампус КНИТУ‑КАИ</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <!-- Авто‑переход через 30 секунд
+  <meta http-equiv="refresh" content="30; url=app-files/index.html"> -->
+
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    :root {
+      --bg: #020617;
+      --card: rgba(15, 23, 42, 0.98);
+      --accent: #22c55e;
+      --accent-soft: rgba(34, 197, 94, 0.16);
+      --primary: #60a5fa;
+      --text-main: #e5e7eb;
+      --text-soft: #9ca3af;
+      --radius-lg: 28px;
+      --radius-md: 18px;
+      --shadow-strong: 0 28px 80px rgba(15, 23, 42, 0.95);
+    }
+
+    body {
+      min-height: 100vh;
+      background:
+        radial-gradient(circle at top, #0f172a 0, #020617 52%),
+        radial-gradient(circle at bottom right, #1d4ed8 0, #020617 55%);
+      color: var(--text-main);
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", sans-serif;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 32px 16px;
+    }
+
+    @media (max-width: 880px) {
+      body {
+        padding: 20px 12px;
+      }
+    }
+
+    .glow {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .glow::before,
+    .glow::after {
+      content: "";
+      position: absolute;
+      border-radius: 999px;
+      filter: blur(56px);
+      opacity: 0.6;
+      mix-blend-mode: screen;
+    }
+
+    .glow::before {
+      width: 520px;
+      height: 520px;
+      background: radial-gradient(circle, rgba(59,130,246,0.7), transparent 60%);
+      top: -140px;
+      left: -120px;
+    }
+
+    .glow::after {
+      width: 460px;
+      height: 460px;
+      background: radial-gradient(circle, rgba(34,197,94,0.72), transparent 60%);
+      bottom: -140px;
+      right: -40px;
+    }
+
+    .shell {
+      position: relative;
+      z-index: 1;
+      width: 100%;
+      max-width: 1040px;
+    }
+
+    .card {
+      border-radius: var(--radius-lg);
+      background: var(--card);
+      border: 1px solid rgba(148, 163, 184, 0.25);
+      box-shadow: var(--shadow-strong);
+      padding: 32px 34px;
+      display: grid;
+      grid-template-columns: minmax(0, 6.5fr) minmax(0, 5.5fr);
+      gap: 32px;
+      backdrop-filter: blur(18px);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .card::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(circle at top left, rgba(56,189,248,0.18), transparent 55%);
+      opacity: 0.9;
+      pointer-events: none;
+    }
+
+    @media (max-width: 880px) {
+      .card {
+        grid-template-columns: 1fr;
+        padding: 26px 20px 24px;
+        border-radius: 22px;
+        gap: 24px;
+      }
+    }
+
+    .left,
+    .right {
+      position: relative;
+      z-index: 1;
+    }
+
+    .badge-row {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 18px;
+      font-size: 13px;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: var(--text-soft);
+    }
+
+    .badge {
+      padding: 5px 12px;
+      border-radius: 999px;
+      background: rgba(15,23,42,0.9);
+      border: 1px solid rgba(96, 165, 250, 0.55);
+      color: #bfdbfe;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 12px;
+    }
+
+    .badge-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 999px;
+      background: #4ade80;
+      box-shadow: 0 0 0 4px rgba(74,222,128,0.26);
+    }
+
+    h1 {
+      font-size: 32px;
+      line-height: 1.25;
+      margin-bottom: 12px;
+    }
+
+    @media (max-width: 880px) {
+      h1 { font-size: 26px; }
+    }
+
+    .highlight {
+      background: linear-gradient(120deg, #60a5fa, #22c55e);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+    }
+
+    .tagline {
+      font-size: 17px;
+      line-height: 1.7;
+      margin-bottom: 18px;
+      color: #e5e7eb;
+    }
+
+    .desc {
+      font-size: 15px;
+      line-height: 1.8;
+      color: var(--text-soft);
+      margin-bottom: 22px;
+      max-width: 46rem;
+    }
+
+    .stats-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-bottom: 24px;
+    }
+
+    .stat-chip {
+      padding: 7px 12px;
+      border-radius: 999px;
+      background: rgba(15,23,42,0.9);
+      border: 1px solid rgba(148, 163, 184, 0.45);
+      font-size: 13px;
+      color: #e5e7eb;
+    }
+
+    .cta-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 14px;
+      align-items: center;
+    }
+
+    .btn-primary {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      padding: 12px 26px;
+      border-radius: 999px;
+      border: none;
+      background: radial-gradient(circle at top left, #4ade80, #22c55e);
+      color: #022c22;
+      font-weight: 600;
+      font-size: 15px;
+      text-decoration: none;
+      box-shadow: 0 18px 46px rgba(34, 197, 94, 0.45);
+      cursor: pointer;
+      transform: translateY(0);
+      transition:
+        transform 0.16s ease-out,
+        box-shadow 0.18s ease-out,
+        filter 0.16s ease-out;
+    }
+
+    .btn-primary span.icon {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 22px;
+      height: 22px;
+      border-radius: 999px;
+      background: rgba(6, 95, 70, 0.24);
+      font-size: 14px;
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 22px 60px rgba(34, 197, 94, 0.55);
+      filter: brightness(1.03);
+    }
+
+    .btn-primary:active {
+      transform: translateY(1px);
+      box-shadow: 0 11px 30px rgba(34, 197, 94, 0.4);
+    }
+
+    .redirect-note {
+      font-size: 13px;
+      line-height: 1.6;
+      color: var(--text-soft);
+    }
+
+    .redirect-note strong {
+      color: #e5e7eb;
+      font-weight: 500;
+    }
+
+    .right {
+      border-radius: var(--radius-md);
+      padding: 20px 20px 18px;
+      border: 1px solid rgba(148, 163, 184, 0.4);
+      background:
+        radial-gradient(circle at top right, rgba(59,130,246,0.3), transparent 56%),
+        radial-gradient(circle at bottom left, rgba(34,197,94,0.24), transparent 55%),
+        rgba(15, 23, 42, 0.98);
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      font-size: 14px;
+      line-height: 1.7;
+    }
+
+    .right-title {
+      font-size: 14px;
+      text-transform: uppercase;
+      letter-spacing: 0.16em;
+      color: #c4b5fd;
+      margin-bottom: 4px;
+    }
+
+    .section-label {
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.14em;
+      color: var(--text-soft);
+      margin-bottom: 6px;
+    }
+
+    .right ul {
+      list-style: none;
+      margin: 0;
+      padding-left: 0;
+    }
+
+    .right li {
+      position: relative;
+      padding-left: 16px;
+      margin-bottom: 6px;
+    }
+
+    .right li::before {
+      content: "";
+      position: absolute;
+      left: 4px;
+      top: 10px;
+      width: 4px;
+      height: 4px;
+      border-radius: 999px;
+      background: rgba(191, 219, 254, 0.95);
+    }
+
+    .contacts {
+      padding-top: 10px;
+      border-top: 1px dashed rgba(148, 163, 184, 0.45);
+      font-size: 13px;
+      line-height: 1.8;
+      color: var(--text-soft);
+    }
+
+    .contacts strong {
+      color: #e5e7eb;
+      font-weight: 500;
+    }
+
+    .fade-in {
+      animation: fadeInUp 0.6s ease-out;
+    }
+
+    @keyframes fadeInUp {
+      from {
+        opacity: 0;
+        transform: translateY(16px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="glow"></div>
+
+  <div class="shell fade-in">
+    <div class="card">
+      <section class="left">
+        <div class="badge-row">
+          <div class="badge">
+            <span class="badge-dot"></span>
+            VR-тур · акселератор
+          </div>
+          <span>Онлайн‑кампус КНИТУ‑КАИ</span>
+        </div>
+
+        <h1>
+          Виртуальный тур <span class="highlight">по университету КАИ</span>
+        </h1>
+
+        <p class="tagline">
+          360°‑экскурсия по корпусам и ключевым пространствам КНИТУ‑КАИ
+          для абитуриентов, которые не могут приехать лично.
+        </p>
+
+        <p class="desc">
+          Проект иммерсивной экскурсии создает цифровой двойник кампуса: тур работает в браузере
+          и в VR‑очках, его можно встроить в сайт вуза и использовать на днях открытых дверей
+          и онлайн‑мероприятиях.
+        </p>
+
+        <div class="stats-row">
+          <span class="stat-chip">EdTech · VR‑профориентация</span>
+          <span class="stat-chip">Фокус на иногородних и иностранных абитуриентах</span>
+          <span class="stat-chip">Инструмент для приемной комиссии</span>
+        </div>
+
+        <div class="cta-row">
+          <a class="btn-primary" href="app-files/index.html">
+            <span class="icon">▶</span>
+            <span>Перейти в VR‑тур</span>
+          </a>
+          <div class="redirect-note">
+            <strong>Автопереход через несколько секунд.</strong><br>
+            Если этого не произошло, нажмите кнопку.
+          </div>
+        </div>
+      </section>
+
+      <aside class="right">
+        <div>
+          <div class="right-title">о проекте</div>
+          <div class="section-label">Зачем это нужно</div>
+          <ul>
+            <li>Показать кампус тем, кто живёт в другом городе или стране.</li>
+            <li>Снизить барьер неизвестности перед поступлением.</li>
+            <li>Дать современный формат презентации университета.</li>
+          </ul>
+        </div>
+
+        <div>
+          <div class="section-label">Как это работает</div>
+          <ul>
+            <li>Съёмка на 360° камеру и обработка панорам.</li>
+            <li>Интерактивная навигация по точкам интереса.</li>
+            <li>Поддержка просмотра с ноутбука, телефона и VR‑очков.</li>
+          </ul>
+        </div>
+
+        <div class="contacts">
+          <strong>Команда проекта</strong><br><br>
+          <strong>Тимур Рахимов</strong><br>
+          Менеджер по продукту<br>
+          
+          <strong>Илья Казмирук</strong><br>
+          Техническое руководство<br>
+          
+          <strong>Руслан Галеев</strong><br>
+          Разработчик приложений — Web, Android.<br>
+          
+          <strong>Денис Федоров</strong><br>
+          Разработчик приложений — Unity, VR.<br>
+          
+          <strong>Денис Иванов</strong><br>
+          Специалист по визуальному контенту
+        </div>
+      </aside>
+    </div>
+  </div>
+</body>
+</html>
